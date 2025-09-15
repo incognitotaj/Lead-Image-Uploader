@@ -1,12 +1,11 @@
 # Lead Image Uploader
 
-##Entities
+## Entities
 - Customer (Name, Email)
 - Customer Attachments (FileName, ImageData)
 
-##Github repository
+## Github repository
 https://github.com/incognitotaj/Lead-Image-Uploader
 
-##Requirements
-Max. number of attachments per customer = 10
-Implemented using global options in appsettings
+## Requirements
+- Max. number of attachments per customer = 10. Implemented using global options in appsettings.
