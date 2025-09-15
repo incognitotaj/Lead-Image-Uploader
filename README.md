@@ -1,8 +1,8 @@
 # Lead Image Uploader
 
 ##Entities
-### Customer (Name, Email)
-### Customer Attachments (FileName, ImageData)
+- Customer (Name, Email)
+- Customer Attachments (FileName, ImageData)
 
 ##Github repository
 https://github.com/incognitotaj/Lead-Image-Uploader
