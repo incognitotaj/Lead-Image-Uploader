@@ -1,4 +1,5 @@
 
+using Api;
 using Api.Extensions;
 using Api.Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
@@ -33,6 +34,8 @@ builder.Services.AddSwaggerGen(o =>
 
     o.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
 });
+
+builder.Services.Configure<LeadApiOptions>(builder.Configuration.GetSection(nameof(LeadApiOptions)));
 
 builder.Services.AddDbContext<ApplicationDbContext>((sp, optionsBuilder) =>
 {

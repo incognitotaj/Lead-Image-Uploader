@@ -4,6 +4,7 @@ using Api.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace Api.Controllers
 {
@@ -13,7 +14,9 @@ namespace Api.Controllers
     /// <param name="context"></param>
     [Route("api/customers/{customerId:guid}/customer-attachments")]
     [ApiController]
-    public class CustomerAttachmentsController(ApplicationDbContext context) : ControllerBase
+    public class CustomerAttachmentsController(
+        ApplicationDbContext context,
+        IOptions<LeadApiOptions> options) : ControllerBase
     {
         /// <summary>
         /// Gets all attachments by customer ID
@@ -89,13 +92,20 @@ namespace Api.Controllers
         /// <response code="404">Returned when no customer with provided ID was found</response>
         [HttpPost()]
         [Consumes("multipart/form-data")]
-        public async Task<Results<NotFound<string>, BadRequest, ProblemHttpResult, Created<Guid>>> Create(Guid customerId, [FromForm] CustomerAttachmentCreateModel model, CancellationToken cancellationToken)
+        public async Task<Results<NotFound<string>, BadRequest<string>, ProblemHttpResult, Created<Guid>>> Create(Guid customerId, [FromForm] CustomerAttachmentCreateModel model, CancellationToken cancellationToken)
         {
             var customer = await context.Customers
+                .Include(p => p.Attachments)
                 .FirstOrDefaultAsync(p => p.Id == customerId, cancellationToken);
             if (customer == null)
             {
                 return TypedResults.NotFound($"Customer {customerId} not found");
+            }
+
+            var IsMaxAttachments = customer.Attachments.Count == options.Value.MaxImagesPerCustomer;
+            if (IsMaxAttachments)
+            {
+                return TypedResults.BadRequest($"Maximum allowed attachments {options.Value.MaxImagesPerCustomer} reached");
             }
 
             CustomerAttachment attachment;
